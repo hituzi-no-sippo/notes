@@ -1,0 +1,15 @@
+rules:
+  preset-ja-technical-writing: true
+  preset-jtf-style:
+    # 半角の丸括弧 `()` を許可する
+    # 修正時(--fix)に、半角の始め丸括弧 '(' が全角に修正されないため
+    # 半角の始め丸括弧が、全角の始め丸括弧に修正するように修正されたら、
+    # 半角の丸括弧は許可しない。全角の丸括弧のみ許可する。
+    # https://github.com/textlint-ja/textlint-rule-preset-JTF-style/issues/93
+    # https://github.com/textlint-ja/textlint-rule-preset-JTF-style/issues/81
+    4.3.1.丸かっこ（）: false
+  ja-space-around-code:
+    before: true
+    after:  true
+plugins:
+  - asciidoctor
