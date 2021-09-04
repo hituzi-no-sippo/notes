@@ -1,0 +1,163 @@
+= 日本語を校正する環境templateを作成した
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-09-04T13:52:04+0900
+:revremark: First Edition
+:doctype: article
+:description: 日本語を校正する環境templateの説明
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: preamble
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-09-04T13:52:04+0900
+:creation-date: 2021-09-04T09:37:14+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [lint, textlint, japanese]
+:github-url: https://github.com
+:textlint-url: https://textlint.github.io
+:japanese-lint-template-repository-url: {github-url}/hituzi-no-sippo/japanese-lint-template
+
+日本語を校正する環境link:{japanese-lint-template-repository-url}[
+template repository^]を作成しました。
+日本語の校正にはlink:{textlint-url}[textlint^]を使用します。
+
+== 導入方法
+
+. Repositoryをcloneする +
+  `git clone {japanese-lint-template-repository-url}`
+. Repositoryに移動する +
+  `cd japanese-lint-template`
+. textlintとtextlintのrulesをinstallする +
+  `npm install`
+. 動作確認する
+  .. errorになるfileを作成する +
+    `echo 'びっくりマークは半角だとerrorです!' > test.md`
+  .. textlintでlintし、errorが発生することを確認する +
+    `npm run lint`
+  .. textlintで修正し、errorが修正することを確認する +
+     `npm run fix`
+
+[NOTE]
+====
+link:{japanese-lint-template-repository-url}/generate[
+GitHubの btn:[Use this template]^]で、GitHub repositoryを作成できます。
+====
+
+== なぜtextlintなのか
+
+* setupが簡単
+* 日本語のrule presetがあるから
+
+link:https://redpen.cc/[
+redpen^]も日本語を校正できますが、次の2点の理由でやめました。
+
+* textlintのほうが、普及している感じがする
+* textlintのほうが、沢山情報がある感じがする
+
+redpenは実際に使用したことはなく、性能や設定しやすさで比較はしていません。
+
+textlintとredpen以外の日本語を校正できるCLI toolは知りません。
+
+== 設定しているrules
+:textlint-ja-org-url: {github-url}/textlint-ja
+
+.Rule Preset
+* link:{textlint-ja-org-url}/textlint-rule-preset-ja-technical-writing[
+  textlint-rule-preset-ja-technical-writing^] +
+  技術文章向けのrule presetです。
+* link:{textlint-ja-org-url}/textlint-rule-preset-JTF-style[
+  textlint-rule-preset-JTF-style^]
++
+--
+link:https://www.jtf.jp/tips/styleguide[
+一般社団法人 日本翻訳連盟(JTF)の日本語標準スタイルガイド^]を守るrule presetです。
+
+半角の丸括弧 `()` だけ許可しています。
+修正時(`texelint --fix`)に、半角の始め丸括弧 '(' が全角に修正されないためです。
+半角の始め丸括弧が、全角の始め丸括弧に修正するように修正されたら、
+半角の丸括弧は許可しません。全角の丸括弧のみ許可します。 +
+丸括弧以外の半角の記号は、許可していません。
+きちんと全角に修正される(e.g. `!` `?`) or
+私の日本語の文章で殆ど使わない(e.g. `{}`, `[]`)からです。
+
+.関連issues
+* link:{textlint-ja-org-url}/textlint-rule-preset-JTF-style/issues/93[
+  4.3.2.大かっこ［］: 先頭のカッコの文字の修正が期待通りに行われない^]
+* link:{textlint-ja-org-url}/textlint-rule-preset-JTF-style/issues/81[
+  かっこ と スペースに関するルールの修正とオプションの追加 3.3と4.3.1^]
+--
+
+.Rule
+* link:{textlint-ja-org-url}/textlint-rule-preset-ja-spacing/tree/master/packages/textlint-rule-ja-space-around-code[
+  textlint-rule-ja-space-around-code^] +
+  inline code(e.g. inline `code` です)の前後に空白を挿入するか決めるruleです。 +
+  inline codeの前後は空白を挿入するように設定しています。
+
+== Asciidoc対応
+
+Asciidocに対応しており、 `*.adoc` も校正対象になります。
+link:{github-url}/seikichi/textlint-plugin-asciidoctor[
+textlint-plugin-asciidoctor^]があるからです。
+
+markdown(`*.md`)とplantext(`*.txt`)が、textlintのdefaultの校正対象です。
+
+次のようなerrorが発生するため、asciidocでerrorを0にするのは難しいときがあります。
+
+.`error かっこの外側、内側ともにスペースを入れません。jtf-style/3.3.かっこ類と隣接する文字の間のスペースの有無`
+[source, Asciidoc]
+----
+* link:url[表示する文字^] +  //  改行に必要な `+` を削除すると無くなります
+  箇条書きの説明
+----
+
+:!prewrap:
+
+.`error Line 121 sentence length(152) exceeds the maximum sentence length of 100. Over 52 characters`
+[source, Asciidoc, subs=attributes]
+----
+// URLが長すぎて、1行の文字数制限を越えてしまいます
+link:{textlint-ja-org-url}/textlint-rule-preset-ja-spacing/tree/master/packages/textlint-rule-ja-space-around-code[
+textlint-rule-ja-space-around-code^]
+----
+
+:prewrap:
+
+== gitの管理外fileは校正対象になりません
+
+`npm run {lint|fix}` 実行時、gitの管理外fileは校正対象になりません。
+npm scriptの `lint` で `--ignore-path .gitignore` しており、
+`.gitignore` に含んでいるfileが校正対象から外れるからです。
+
+link:{textlint-url}/docs/ignore.html[
+Ignoring Text^]を読めば、textlintの校正対象から外す設定方法がわかります。
+
+== 今後の開発予定
+
+:husky-link: link:https://typicode.github.io/husky/#/[husky^]
+:lint-staged-link: link:{github-url}/okonet/lint-staged[lint-staged^]
+. commit時にtextlintを実行して、errorとwarningがあったら、commit中止する +
+  {husky-link}と{lint-staged-link}を使えば、実現できそうです。
+. CIを追加する +
+  link:https://zenn.dev/serima/articles/4dac7baf0b9377b0b58b[
+  zenn-cli + reviewdog + textlint + GitHub Actions で執筆体験を最高にする^]
+  が参考になりそうです。
+
+
+'''
+
+{copyright-with-author-link}
