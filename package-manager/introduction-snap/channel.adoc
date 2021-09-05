@@ -1,0 +1,135 @@
+= Channel
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-09-05T16:19:23+0900
+:revremark: First Edition
+:doctype: article
+:description: snapの特徴で機能のchannelの説明
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: preamble
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-09-05T16:19:23+0900
+:creation-date: 2021-09-05T13:06:29+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [package manager, snap]
+
+Install、更新を追跡するresourceの種類(e.g. 安定版 beta版)は、channelで決めます。
+
+== Channelの構成
+
+次の3要素で、channelは構成しています。
+
+Track::
+  Version違いなどを、同じsnap nameで公開できるようにしています。
+  e.g. latest, 2, 4.16
+Risk-Levels::
+  次の4つで、危険度を表示しています。
+  stable, beta, edge, candidate
+Branches::
+  bugfixなどの一時的なreleaseに使用します。必須の要素ではありません。
+
+次のように、3要素を `/` で区切り、channelを表わすchannel nameを構成します。
+
+.Channel Nameの構成
+`<track>/<risk>/<branch>`
+
+.Risk-Levelsの値の説明
+stable::
+  大多数の人が本番環境で使用でき、 製品として使用できます。
+candidate::
+  stableを導入前に更新内容をtestする必要がある、
+  特定の問題が解決したかの確認したい人向けです。
+  stableへの移行の準備が殆ど整っていると考えられ、appはほとんど壊れません。
+beta::
+  最新機能を試したい人向けです。
+  未完成部分がある可能性があり、appを壊す変更がよくあります。
+edge::
+  開発状況を詳細に知りたい人向けです。
+  betaと違い、QAやreviewされていない変更が多く含まれており、
+  appがbeatよりよく壊れます。
+
+== Channelの指定方法
+
+`--channel=<channel_name>` で、channelを指定します。
+`install` と `refresh` commandで使用できます。
+
+trackとrisk-levelsのdefaultが `latest` と `stable` なので、
+`snap install <snap_name>` = `snap install <snap_name> --channel=latest/stable`
+です。
+
+`--channel=beta` のようにrisk-Levelsだけの指定もできます。
+このとき、trackは `latest` です。
+`--channel=<risk-levels>` の代わりに、 `--beta` のように `--<risk-levels>`
+でrisk-Levelsを指定できます。
+
+== 追跡しているchannelだけを変更する方法
+
+`switch` commandを使います。
+e.g. `sudo snap switch --channel=beta <snap_name>`
+
+`refresh` commandでも、追跡しているchannelを変更できますが、snapの更新もします。
+
+== 追跡しているchannelの確認方法
+
+`snap list` の `Tracking` を見れば、
+installしているsnap(package)の追跡しているchannelを確認できます。
+
+[listing]
+....
+> snap list
+Name      Version           Rev    Tracking         Publisher   Notes
+core      16-2.51.4         11606  latest/stable    canonical✓  core
+core18    20210722          2128   latest/stable    canonical✓  base
+core20    20210702          1081   latest/stable    canonical✓  base
+exercism  SNAPSHOT-ba48dcd  5      latest/stable    exercism    -
+lxd       4.17              21390  latest/stable/…  canonical✓  -
+snapd     2.51.4            12883  latest/stable    canonical✓  snapd
+....
+
+`snap info <snap_name>` だと、installしているsnapのchannel listも確認できます。
+
+[listing]
+....
+> snap info lxd
+name:      lxd
+summary:   LXD - container and VM manager
+...
+snap-id:      J60k4JY0HppjwOjW8dZdYc8obXKxujRu
+# 追跡しているchannel
+tracking:     latest/stable/ubuntu-20.04
+refresh-date: today at 11:02 JST
+channels:
+  latest/stable:    4.17        2021-08-26 (21390) 72MB -
+  latest/candidate: 4.18        2021-09-03 (21468) 75MB -
+  latest/beta:      ↑
+  latest/edge:      git-2dea139 2021-09-02 (21455) 75MB -
+  4.18/stable:      –
+  ...
+  2.0/edge:         git-82c7d62 2021-03-22 (19857) 39MB -
+installed:          4.17                   (21390) 72MB -
+....
+
+
+// tag::copyright[]
+
+'''
+
+{copyright-with-author-link}
+
+// end::copyright[]

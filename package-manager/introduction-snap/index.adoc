@@ -1,0 +1,76 @@
+= snapの紹介
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-09-05T16:33:05+0900
+:revremark: First Edition
+:doctype: article
+:description: package managerのsnapの紹介
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: preamble
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-09-05T16:33:05+0900
+:creation-date: 2021-09-04T15:14:33+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [package manager, snap, ubuntu, cli, wsl2]
+:snap-url: https://snapcraft.io
+:installing-snapd-linux-url: https://snapcraft.io/docs/installing-snapd
+
+link:{snap-url}[snap]はapp packageです。次の特徴を持っています。
+
+.snapの特徴
+* 他のpackageとの依存がない +
+  packageごとに、upgrade, downgradeできる。
+* Linuxのdistributionが関係ない +
+  Ubuntu, Arch Linux, Kali Linuxなどで使えます。
+  link:{installing-snapd-linux-url}[対応しているdistribution list^]
+* 自動更新がある +
+  metadateやpackageの自動更新があります。更新頻度は設定できます。
+
+
+link:https://ubuntu.com/[
+Ubuntu^]の支援と開発援助をしているlink:https://canonical.com/[
+Canonical^]が、snapを開発しています。
+OSSで、link:https://github.com/snapcore/[
+GitHubにrepositoryがあります。^]
+
+:leveloffset: +1
+
+include::./setup-snap.adoc[tags=!copyright]
+
+include::./snap-auto-update.adoc[tags=!copyright]
+
+include::./channel.adoc[tags=!copyright]
+
+:leveloffset: -1
+
+== Reference
+
+* link:https://news.mynavi.jp/article/liunx_win-44/[
+  Windowsユーザーに贈るLinux超入門(44) LinuxでパッケージとしてUbuntu生まれのSnapを使ってみる | TECH+^]
+* link:https://gihyo.jp/admin/serial/01/ubuntu-recipe[
+  Ubuntu Weekly Recipe：連載｜gihyo.jp … 技術評論社^]
+  ** link:https://gihyo.jp/admin/serial/01/ubuntu-recipe/0515[
+     Ubuntu 18.04 LTSとSnapパッケージ：Ubuntu Weekly Recipe^]
+  ** link:https://gihyo.jp/admin/serial/01/ubuntu-recipe/0582[
+     いろいろなディストリビューションでsnapとLXDを利用する^]
+
+
+'''
+
+{copyright-with-author-link}

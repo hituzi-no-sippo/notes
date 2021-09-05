@@ -1,0 +1,101 @@
+= snapの導入方法
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-09-05T16:38:22+0900
+:revremark: First Edition
+:doctype: article
+:description: package managerのsnapの導入方法
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: auto
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-09-05T16:38:22+0900
+:creation-date: 2021-09-05T11:56:17+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [package manager, snap, cli, ubuntu, wsl2]
+
+
+[NOTE]
+====
+link:https://snapcraft.io/docs/installing-snapd#heading--pre-installed[
+次のLinux distributionなどは、snapをpre-installしています。^]
+
+* Ubuntu
+  ** 20.04 LTS
+  ** 18.04 LTS
+  ** 20.10
+  ** 21.04
+* link:https://manjaro.org/[Manjaro^]
+* link:https://zorin.com/os/[Zorin OS^]
+====
+
+.OS
+Ubuntu 20.04 LTS on WLS2
+
+. snapd(snap deamon)をinstallする
++
+--
+[source, bash]
+----
+sudo apt update
+sudo apt install snapd
+----
+--
+. WLS2特有の問題で、snapdが動かないので、問題を解決する +
+  link:https://github.com/microsoft/WSL/issues/5126#issuecomment-840968984[
+  次のcommandを実行します。^]commandの意味は調査していません。
++
+--
+[source, bash]
+----
+sudo apt-get update && sudo apt-get install -yqq daemonize dbus-user-session fontconfig
+sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target
+exec sudo nsenter -t $(pidof systemd) -a su - $LOGNAME
+# or exec sudo nsenter -m -u -i -n -p -C -r -w -t $(pidof systemd) -a su - $LOGNAME
+----
+--
+. snapdが動いているか確認する +
+  `snap version` を実行します。
++
+--
+[literal]
+....
+> snap version
+snap    2.49.2+20.04
+snapd   2.49.2+20.04
+series  16
+ubuntu  20.04
+kernel  4.19.104-microsoft-standard
+....
+--
+. 動作確認する
+  .. Hello Worldをinstallする +
+    `sudo snap install hello-world`
+  .. Hello Worldを実行する +
+    `hello-world`
+  .. Hello Worldを削除する +
+    `sudo snap remove hello-world`
+
+
+// tag::copyright[]
+
+'''
+
+{copyright-with-author-link}
+
+// end::copyright[]

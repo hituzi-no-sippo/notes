@@ -1,0 +1,109 @@
+= snapの自動更新
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-09-05T16:41:35+0900
+:revremark: First Edition
+:doctype: article
+:description: snapの自動更新の説明
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: auto
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-09-05T16:41:35+0900
+:creation-date: 2021-09-05T12:00:54+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [package manager, snap, cli]
+
+
+snapは自動で更新します。更新があるかは、snapdが確認します。
+
+更新の有無を確認し、更新することを "refresh" と呼びます。
+snap commandで、更新頻度は変更できます。defaultでは、1日4回です。
+次のように、更新頻度を設定できます。
+
+* 曜日
+* 第何週(e.g. 第4日曜日)
+* 月末
+* AからBまでの間
+
+link:https://snapcraft.io/docs/keeping-snaps-up-to-date#heading--controlling-updates[
+設定方法は公式ドキュメントを読んでください。^]
+
+== refresh command
+
+.refreshを実行する
+[literal]
+....
+> sudo snap refresh
+Ensure prerequisites for "snapd" are available
+Download snap "snapd" (12883) from channel "latest/stable"
+2021-09-05T10:57:40+09:00 INFO Waiting for automatic snapd restart...
+Consider re-refresh of "lxd", "snapd", "core18"
+Download snap "lxd" (21390) from channel "latest/stable/ubuntu-20.04"
+snapd 2.51.4 from Canonical✓ refreshed
+core18 20210722 from Canonical✓ refreshed
+lxd 4.17 from Canonical✓ refreshed
+....
+
+.更新頻度を確認する
+[literal]
+....
+> snap refresh --time
+timer: 00:00~24:00/4      # 更新頻度
+last: today at 10:57 JST  # 前回のrefresh日時
+next: today at 14:45 JST  # 次回のrefresh日時
+....
+
+.次回のrefreshで更新するsnap(package)を確認する
+[literal]
+....
+> snap refresh --list
+All snaps up to date.
+....
+
+.前回refreshの詳細を見たい
+[NOTE]
+====
+`snap change --last={refresh|auto-refresh}` で、
+前回のrefreshの詳細を取得できます。
+前回の手動refreshの詳細を見たいなら `--last=refresh` 、
+前回の自動refreshの詳細を見たいなら `--last=auto-refresh` です。
+
+`snap changes` と `snap change <num>` を扱えば、
+前回以外のrefreshの詳細も取得できます。
+
+[literal]
+....
+> snap changes  # <num>の値を知るために、実行します。
+ID   Status  Spawn               Ready               Summary
+...
+6    Done    today at 10:55 JST  today at 11:02 JST  Refresh snaps  ...
+
+X snap change 6
+....
+
+====
+
+
+// tag::copyright[]
+
+'''
+
+{copyright-with-author-link}
+
+// end::copyright[]
