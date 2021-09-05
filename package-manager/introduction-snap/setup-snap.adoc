@@ -1,9 +1,9 @@
 = snapの導入方法
 :author: hituzi no sippo
 :email: contact@hituzi-no-sippo.me
-:revnumber: v1.0.1
-:revdate: 2021-09-06T07:49:30+0900
-:revremark: Fix typo
+:revnumber: v1.1.0
+:revdate: 2021-09-06T08:17:57+0900
+:revremark: snapのconfig directory pathの説明を追加
 :doctype: article
 :description: package managerのsnapの導入方法
 :title:
@@ -90,6 +90,14 @@ kernel  4.19.104-microsoft-standard
     `hello-world`
   .. Hello Worldを削除する +
     `sudo snap remove hello-world`
+
+
+[NOTE]
+====
+snapのconfig directoryは `~/snap` です。
+link:https://askubuntu.com/questions/882562/how-can-i-change-or-hide-the-snap-directory[
+`~/snap` から変更はできないようです。^]
+====
 
 
 // tag::copyright[]
