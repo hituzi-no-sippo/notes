@@ -1,9 +1,9 @@
 = snapの導入方法
 :author: hituzi no sippo
 :email: contact@hituzi-no-sippo.me
-:revnumber: v1.0.0
-:revdate: 2021-09-05T16:38:22+0900
-:revremark: First Edition
+:revnumber: v1.0.1
+:revdate: 2021-09-06T07:49:30+0900
+:revremark: Fix typo
 :doctype: article
 :description: package managerのsnapの導入方法
 :title:
@@ -45,7 +45,7 @@ link:https://snapcraft.io/docs/installing-snapd#heading--pre-installed[
 ====
 
 .OS
-Ubuntu 20.04 LTS on WLS2
+Ubuntu 20.04 LTS on WSL2
 
 . snapd(snap deamon)をinstallする
 +
