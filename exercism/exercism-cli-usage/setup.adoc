@@ -1,0 +1,95 @@
+= exercism CLIの導入方法
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-09-06T14:29:00+0900
+:revremark: First Edition
+:doctype: article
+:description: exercism CLI setup
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: auto
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-09-06T14:29:00+0900
+:creation-date: 2021-09-06T09:20:25+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [exercism, cli]
+
+
+.OS
+Ubuntu 20.04 LTS on WSL2
+
+. exercism cliをinstallする
++
+--
+link:https://snapcraft.io/[Snap^]を使い、
+`sudo snap install exercism` でinstallします。
+
+link:https://github.com/exercism/cli/releases[
+Source Code^]からでも、installできます。
+--
+. exercismを実行できる確認する
++
+--
+[listing]
+....
+> exercism version
+exercism version 3.0.13
+....
+--
+. tokenを設定します
++
+--
+[listing]
+....
+> exercism configure --token=<token>
+
+You have configured the Exercism command-line client:
+
+Config dir:                       /home/$USER/snap/exercism/5/.config/exercism
+Token:         (-t, --token)      <token>
+Workspace:     (-w, --workspace)  /home/$USER/snap/exercism/5/exercism
+API Base URL:  (-a, --api)        https://api.exercism.io/v1
+....
+--
+
+
+.課題のdownload先(workspace)を変更する方法
+[NOTE]
+====
+`exercism configure -workspace=<path>` で、課題のdownload先を変更します。
+[listing]
+....
+> exercism configure -workspace=<path>
+
+You have configured the Exercism command-line client:
+
+Config dir:                       /home/$USER/snap/exercism/5/.config/exercism
+Token:         (-t, --token)      <token>
+Workspace:     (-w, --workspace)  <path>
+API Base URL:  (-a, --api)        https://api.exercism.io/v1
+....
+====
+
+
+// tag::copyright[]
+
+'''
+
+{copyright-with-author-link}
+
+// end::copyright[]
