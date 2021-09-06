@@ -1,0 +1,112 @@
+= exercism CLIを使用して課題を解く
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-09-06T14:24:23+0900
+:revremark: First Edition
+:doctype: article
+:description: exercism CLIを使用して課題を解く方法を記載している
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: auto
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-09-06T14:24:23+0900
+:creation-date: 2021-09-06T09:37:12+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [exercism, cli]
+
+link:https://exercism.org/tracks/go/exercises/hello-world[
+GoのHello Worldの課題^]を解いてみます。
+
+. 課題をdownloadする
++
+--
+[literal]
+....
+> exercism download --exercise=hello-world --track=go
+
+Downloaded to
+/home/$USER/snap/exercism/5/exercism/go/hello-world
+....
+--
+. 課題のdirectoryに移動する +
+  `cd /home/$USER/snap/exercism/5/exercism/go/hello-world`
+. testを実行して、失敗することを確認する
++
+--
+[literal]
+....
+> go test
+--- FAIL: TestHelloWorld (0.00s)
+    hello_world_test.go:13: HelloWorld() = Goodbye, Mars!, want Hello, World!
+FAIL
+exit status 1
+FAIL    greeting        0.002s
+....
+--
+. 課題を解き、testを成功するようにする
++
+--
+[literal]
+....
+> go test
+PASS
+ok      greeting        0.002s
+....
+--
+. 課題を提出する
++
+--
+[literal]
+....
+> exercism submit hello_world.go
+
+
+    Your solution has been submitted successfully.
+    View it at:
+
+
+    https://exercism.org/tracks/go/exercises/hello-world
+....
+--
+
+
+:download-files-link: link:https://exercism.org/docs/using/solving-exercises/working-locally[ \
+Downloadするfiles^]
+.{download-files-link}
+[NOTE]
+====
+README.md:: 課題の内容、何を解いてほしいか記載している
+HELP.md::  課題が解けてないときに、助けを求める方法、
+           トラブルが発生したときに、助けになる資料を記載している。
+           testの実行方法も記載している。
+HINT.md:: 課題を解くヒントを記載しています。ないときもあります。
+Test files:: 解答が正しいか検証するtestを記載しています。
+Stub files:: 課題を解き始めるの出発点となるfileです。
+             ないときもあります。
+
+これら以外のfileも含まれるときがあります。
+====
+
+
+// tag::copyright[]
+
+'''
+
+{copyright-with-author-link}
+
+// end::copyright[]
