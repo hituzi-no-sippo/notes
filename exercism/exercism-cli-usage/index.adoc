@@ -1,0 +1,69 @@
+= exercism CLIの使い方
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-09-06T14:29:22+0900
+:revremark: First Edition
+:doctype: article
+:description: exercism CLI usage
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: preamble
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-09-06T14:29:22+0900
+:creation-date: 2021-09-05T17:20:25+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [exercism, cli]
+:exercism-url: https://exercism.org
+
+
+Codingの練習ができるlink:{exercism-url}[exercism^]のCLIのsetup方法です。
+課題を解いて提出すると、exercismのmenterからreviewしてくれます。
+Accountが必要です。
+
+対応している言語は55種類あります。
+解答した課題のcodeを共有するか設定できます。
+
+:leveloffset: +1
+
+include::./setup.adoc[tags=!copyright]
+
+include::./solve-exercise.adoc[tags=!copyright]
+
+:leveloffset: -1
+
+
+== References
+
+* exercism
+  ** link:{exercism-url}/cli-walkthrough[
+     Welcome to the Exercism installation guide! ^]
+  ** link:{exercism-url}/docs/using/solving-exercises/working-locally[
+     Working Locally^]
+* link:https://anatofuz.hatenablog.com/entry/2021/01/07/210948[
+  おそるべきプログラミング入門サイトExercismをやってみた - Acme::AnaTofuZ->new;^]
+* link:https://inokara.hateblo.jp/entry/2018/07/29/101858[
+  改めて exercism.io の始めたのでメモ - ようへいの日々精進XP^]
+
+
+// tag::copyright[]
+
+'''
+
+{copyright-with-author-link}
+
+// end::copyright[]
