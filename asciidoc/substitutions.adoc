@@ -1,0 +1,91 @@
+= 置換(Substitutions)
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-09-09T15:15:00+0900
+:revremark: souce block内のURLをlinkにする方法を追加する
+:doctype: article
+:description: 置換属性の説明
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: preamble
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-09-09T15:15:00+0900
+:creation-date: 2021-09-09T10:13:30+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [asciidoc, asciidoctor]
+:asciidoctor-document-url: https://docs.asciidoctor.org/asciidoc/latest
+:asciidoctor-subs-document-url: {asciidoctor-document-url}/subs
+
+
+次に関する置換の情報を記載します。
+
+* 文章内の文字
+* markup
+* attributes
+* 置換処理をするmacro
+
+
+== souce block内のURLをlinkにする
+
+source、listingやliteral bloce内のURLをlinkにするには `macros` を使用します。
+
+link:{asciidoctor-subs-document-url}/apply-subs-to-blocks/#the-subs-attribute[
+`macros` があると、macro処理をします。^]
+macro処理内で、block内のURLは、URL macroになります。
+
+[CAUTION]
+====
+Asciidocでは使えません。Asciidoctorでは使えます。
+====
+
+.Code
+[source, Asciidoc]
+------
+[source, Lua, subs="macros"]
+----
+-- https://neovim.io/doc/user/lsp.html#lsp-api
+-- https://neovim.io/doc/user/lsp.html#lsp-api[LSP API^]
+-- https://neovim.io/doc/user/lsp.html#lsp-api[
+   Neovim LSP API^]
+vim.lsp.buf_request()
+----
+------
+
+.表示
+[source, Lua, subs="macros"]
+----
+-- https://neovim.io/doc/user/lsp.html#lsp-api
+-- https://neovim.io/doc/user/lsp.html#lsp-api[LSP API^]
+-- https://neovim.io/doc/user/lsp.html#lsp-api[
+   Neovim LSP API^]
+vim.lsp.buf_request()
+----
+
+== References
+
+* link:{asciidoctor-subs-document-url}/substitutions/[
+  Substitutions: Asciidoctor Docs^]
+
+
+// tag::copyright[]
+
+'''
+
+{copyright-with-author-link}
+
+// end::copyright[]
