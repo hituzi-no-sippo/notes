@@ -1,9 +1,9 @@
 = Channel
 :author: hituzi no sippo
 :email: contact@hituzi-no-sippo.me
-:revnumber: v1.0.0
-:revdate: 2021-09-05T16:19:23+0900
-:revremark: First Edition
+:revnumber: v1.0.1
+:revdate: 2021-09-13T06:59:01+0900
+:revremark: 公式のChannels documentのlinkを追加する
 :doctype: article
 :description: snapの特徴で機能のchannelの説明
 :title:
@@ -29,7 +29,8 @@
 :copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
 :tags: [package manager, snap]
 
-Install、更新を追跡するresourceの種類(e.g. 安定版 beta版)は、channelで決めます。
+Install、更新を追跡するresourceの種類(e.g. 安定版 beta版)は、link:https://snapcraft.io/docs/channels[
+channels^]で決めます。
 
 == Channelの構成
 
