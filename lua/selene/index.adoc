@@ -66,6 +66,13 @@ lineできるcodeは、Lua 5.1のcodeのみです。^]
 parserはlink:https://github.com/Kampfkarren/full-moon[
 full-moon^]を使用しています。
 
+== Installation
+
+link:{selene-url}/cli/installation.html[
+cargoでinstalleできます。^]
+
+`cargo install selene`
+
 
 '''
 
