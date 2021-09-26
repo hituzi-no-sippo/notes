@@ -1,9 +1,9 @@
 = Stndard Library Configの設定方法
 :author: hituzi no sippo
 :email: contact@hituzi-no-sippo.me
-:revnumber: v1.0.0
-:revdate: 2021-09-26T10:03:33+0900
-:revremark: First Edition
+:revnumber: v1.1.0
+:revdate: 2021-09-26T16:30:36+0900
+:revremark: anyの使用時の注意を追加した
 :doctype: article
 :description: seleneのStndard Library Configの設定方法の説明
 :title:
@@ -166,6 +166,60 @@ Results:
 0 warnings
 0 parse errors
 ....
+
+[CAUTION]
+====
+`any = true` のproperty配下のproperty・関数を定義しても、
+定義した設定を反映しません。
+
+.Code
+[source, Lua]
+----
+vim.NIL = 123
+vim.tbl_count()
+----
+
+.Config
+[source, TOML]
+----
+[vim]
+any = true
+
+[vim.NIL]
+property = true
+
+[[vim.tbl_count.args]]
+type = 'table'
+----
+
+.Rusult
+[literal]
+....
+# `vim` を `any` で定義する前
+error[incorrect_standard_library_use]: standard library function `vim.tbl_count` requires 1 parameters, 0 passed
+  ┌─ test.lua:1:1
+  │
+1 │ vim.tbl_count()
+  │ ^^^^^^^^^^^^^^^
+
+error[incorrect_standard_library_use]: standard library global `vim.NIL` is not writable
+  ┌─ test.lua:2:1
+  │
+2 │ vim.NIL = 123
+  │ ^^^^^^^
+
+Results:
+2 errors
+0 warnings
+0 parse errors
+
+# `vim` を `any` で定義した後
+Results:
+0 errors
+0 warnings
+0 parse errors
+....
+====
 
 === Table
 
