@@ -1,9 +1,10 @@
 = selene Stndard Library Config
 :author: hituzi no sippo
 :email: contact@hituzi-no-sippo.me
-:revnumber: v1.0.0
-:revdate: 2021-09-26T13:56:27+0900
-:revremark: First Edition
+:revnumber: v1.0.1
+:revdate: 2021-09-26T15:58:34+0900
+:revremark: 関数の引数の型と数が違うときのerror表示で使用するcodeを修正した。 \
+            `vim.inspect()` は、tableの引数も処理できるので、errorは表示されない。
 :doctype: article
 :description: seleneのstandard library configの説明
 :title:
@@ -90,17 +91,17 @@ error[undefined_variable]: `vim` is not defined
 .stdlib configで関数の引数の型と数を定義しており、定義と違うとerrorになります
 [literal]
 ....
-error[incorrect_standard_library_use]: standard library function `vim.inspect` requires 1 parameters, 0 passed
+error[incorrect_standard_library_use]: standard library function `vim.tbl_count` requires 1 parameters, 0 passed
   ┌─ test.lua:1:1
   │
-1 │ vim.inspect()
-  │ ^^^^^^^^^^^^^
+1 │ vim.tbl_count()
+  │ ^^^^^^^^^^^^^^^
 
-error[incorrect_standard_library_use]: use of standard_library function `vim.inspect` is incorrect
-  ┌─ test.lua:2:13
+error[incorrect_standard_library_use]: use of standard_library function `vim.tbl_count` is incorrect
+  ┌─ test.lua:2:15
   │
-2 │ vim.inspect(123)
-  │             ^^^ expected `table`, received `number`
+2 │ vim.tbl_count(123)
+  │               ^^^ expected `table`, received `number`
 
 Results:
 2 errors
