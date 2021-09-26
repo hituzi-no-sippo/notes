@@ -2,7 +2,7 @@
 :author: hituzi no sippo
 :email: contact@hituzi-no-sippo.me
 :revnumber: v1.0.0
-:revdate:
+:revdate: 2021-09-26T14:11:54+0900
 :revremark: First Edition
 :doctype: article
 :description: Lua codeをlintするseleneの紹介
@@ -23,7 +23,7 @@
 :!listing-caption:
 :copyright: Copyright (c) 2021 {author}
 
-:first-publication-date:
+:first-publication-date: 2021-09-26T14:11:54+0900
 :creation-date: 2021-09-11T16:17:48+0900
 
 :copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
@@ -66,12 +66,34 @@ lineできるcodeは、Lua 5.1のcodeのみです。^]
 parserはlink:https://github.com/Kampfkarren/full-moon[
 full-moon^]を使用しています。
 
+== Luacheckとの違い
+
+include::./difference-to-luacheck.adoc[tags='body,!license', leveloffset=+2]
+
 == Installation
 
 link:{selene-url}/cli/installation.html[
 cargoでinstalleできます。^]
 
 `cargo install selene`
+
+== 使用方法
+
+include::./cli-usage.adoc[tags='body,!license', leveloffset=+2]
+
+== 設定
+
+include::./configuration.adoc[tags='body,!license', leveloffset=+2]
+
+=== Standard Library Config
+
+関数の引数の型や数が違う場合、errorを発生するようにできる、
+Stndard Library Configの設定方法はlink:../selene-standard-library-config[
+この記事^]に記載しています。量が多いため、別にしました。
+
+== 特定のcodeを無視する
+
+include::./ignore-code-with-comment.adoc[tags='body,!license', leveloffset=+2]
 
 
 '''
