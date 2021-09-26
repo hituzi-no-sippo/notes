@@ -1,9 +1,9 @@
 = Function
 :author: hituzi no sippo
 :email: contact@hituzi-no-sippo.me
-:revnumber: v1.0.1
-:revdate: 2021-09-26T16:38:48+0900
-:revremark: typo修正
+:revnumber: v1.1.0
+:revdate: 2021-09-26T16:42:20+0900
+:revremark: 引数の型の複数選択ができない説明を追加した。
 :doctype: article
 :description: seleneのStndard Library Configのfunctionの設定方法の説明
 :title:
@@ -147,7 +147,9 @@ Results:
 `any` ::
   どんな型でもOKです。
 `number`, `string`, `bool`, `table`, `function`, `nil`::
-  値の型に設定します。
+  値の型に設定します。 複数の型を選択はできません。
+  `type = ['number', 'string']` と記載すると
+  `number` or `string` の値の文字列を期待する引数になります。
 `...` ::
   可変長引数にします。
   この引数の順番は、引数の最後にしてください。途中に入れるのは正しくありません。
