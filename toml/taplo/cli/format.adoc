@@ -1,0 +1,180 @@
+= format
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-09-30T18:30:18+0900
+:revremark: First Edition
+:doctype: article
+:description: TaploでTOMLをformatする方法
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: preamble
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-09-30T18:30:18+0900
+:creation-date: 2021-09-27T16:19:44+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [TOML, Taplo, Formatter, CLI]
+
+// tag::body[]
+
+.Official Documentation
+link:https://taplo.tamasfe.dev/cli/#features[
+Command Line — Taplo^]
+
+`taplo format <path|pattern>` で、TOML filesをformatします。
+TOML fileにsyntax errorがあると、formatは失敗します。
+
+`taplo format` ではなく、 `taplo fmt` でもformatできます。
+
+[CAUTION]
+====
+formatはせず、style違反の有無を判定するだけの機能はないようです。
+====
+
+== 出力
+
+formatが成功したかの結果だけを表示します。styleに違反している箇所は表示しません。
+
+.成功時
+[literal]
+....
+> taplo format test.toml
+success: processed 1 document with no errors
+....
+
+.失敗時(TOMLにsyntax errorがある)
+[literal]
+....
+> taplo format test.toml
+failure: processed 1 document with 1 error
+....
+
+== Flags・Options
+
+`format` で使用できるflagsとoptionsです。
+`taplo --help` で表示される、共通のflags・optionsの説明は省略します。
+
+.Flags
+force:: syntax errorがあっても、失敗にならず、formatをします。
+        これを使用すると、TOMLの内容を変更するときがあります。
++
+--
+[literal]
+....
+> cat test.toml
+[apple]
+any === true  # `===` がsyntax errorです
+
+# syntax errorがあるので失敗します
+> taplo format test.toml
+failure: processed 1 document with 1 error
+
+# `--force` flagを付与して、syntax errorがあっても、formatするようにします
+> taplo format --force test.toml
+success: processed 1 document with no errors
+
+> cat test.toml
+[apple]
+any = =  # TOMLの内容が変更されています
+....
+--
+
+.Options
+config::
+  taploのconfig fileを指定します。
+  defaultは `.taplo.toml` or `taplo.toml` です。
+options::
+  `options=<option_name>=<value>` でformatの動作を変更します。
+  `taplo format --options=trailing_newline=false` で、
+  fileの最後に、改行をいれないようにします。
+  config fileの `[Formatting]` で設定している値より、
+  こちらの `options` の値を優先して使用します。
+
+'''
+
+[NOTE]
+====
+Official Documentationに記載はありませんでしたが、動作確認すると、
+行末までの無駄な空白を削除していました。
+
+.`taplo format` 実行前
+[source, TOMR]
+----
+# `<` が改行位置です
+[apple]
+orange = true    <
+melon = true     # comment<
+----
+
+.`taplo format` 実行後
+[source, TOMR]
+----
+# `<` が改行位置です
+[apple]
+orange = true<
+melon = true  # comment<
+----
+====
+
+'''
+
+// tag::license[]
+
+:taplo-license-link: link:https://github.com/tamasfe/taplo/blob/master/LICENSE.md[Taplo LICENSE^]
+.{taplo-license-link}
+[%collapsible%open]
+=====
+
+[literal]
+....
+MIT License
+
+Copyright (c) 2020 Ferenc Tamás
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+....
+
+=====
+
+// end::license[]
+
+// end::body[]
+
+
+// tag::copyright[]
+
+'''
+
+{copyright-with-author-link}
+
+// end::copyright[]
