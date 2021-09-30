@@ -1,0 +1,341 @@
+= lint
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-10-01T10:55:33+0900
+:revremark: First Edition
+:doctype: article
+:description: TOMLのlintをする方法
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: preamble
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-10-01T10:55:33+0900
+:creation-date: 2021-09-27T09:23:05+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [TOML, Taplo, Lint, Validator, JSON schema, CLI]
+
+// tag::body[]
+
+:taplo-url: https://taplo.tamasfe.dev
+
+.Official Documentation
+link:{taplo-url}/cli/#installation[
+Command Line — Taplo^]
+
+`taplo lint <path|pattern>` でTOML filesをlintできます。
+`taplo lint` だと、project内のTOML filesをlintします。
+
+validationもできます。validationには、link:https://json-schema.org
+[JSON Schema^]を使用します。
+
+`taplo lint` ではなく `taplo check` でもlintできます。
+
+== 出力
+
+messageと一緒に、error, warning箇所を表示します。
+syntax errorなどは、修正方法を教えてくれます。
+
+.Syntax Error
+[literal]
+....
+error: invalid syntax
+   --> test.toml:1:7
+    |
+ 1  | [[vim]
+    | ______^
+ 2  ||any = true
+    ||^ expected "]]"
+failure: processed 1 document with 1 error
+....
+
+.keyが重複している
+[literal]
+....
+error: duplicate key "any"
+ --> test.toml:3:1
+  |
+3 | any = true
+  | ^^^ defined here
+  |
+ ... test.toml:2:1
+  |
+2 | any = 1
+  | ^^^ already defined here
+failure: processed 1 document with 1 error
+....
+
+== Flags・Options
+
+`lint` で使用できるflagsとoptionsです。
+`taplo --help` で表示する共通のflags・optionsの説明は省略します。
+
+.Options
+config::
+  cofig fileを指定します。
+
+== Validation
+
+`schema` optionや `--default-schema-repository` flagを使用すると、
+validationもします。validationにはJSON Schemaを使用します。
+
+link:{taplo-url}/configuration/#official-schemas[
+`Cargo.toml` や `Makefile.toml` のような、
+特定のfile nameは `--default-schema-repository` flagを付与すれば、
+Taploで設定されたJSON schemaを自動で使用します。^]
+
+`--default-schema-repository` flagや `schema` optionがなくても、
+validationをできます。
+link:{taplo-url}/configuration/#schemas[
+config file(e.g. `taplo.toml`)の `schema` tableに
+`enabled = true` を記載してください。^]
+
+=== Flags・Options
+
+.Flags
+default-schema-repository::
+  JSON Schemaの情報を記載している、link:https://taplo.tamasfe.dev/schema_index.json[
+  Taploのofficial schema repository^]を参照して、
+  validationで使用するJSON schemaを決定します。
+  特定のfile nameとJSON Schemaを紐付ける情報を、
+  schema repositoryに記載されています。
++
+--
+[literal]
+....
+# lintするfile nameが `Cargo.toml` なので
+# Taploのrepositoryにある `Cargo.toml.json` を使用して
+# validationをします。
+> taplo lint --default-schema-repository Cargo.toml
+info: updating schema index from https://taplo.tamasfe.dev/schema_index.json
+error: failed schema validation
+ --> Cargo.toml:2:11
+  |
+2 | authors = 123456
+  |           ^^^^^^ invalid type, expected "Array", not "Integer"
+error: failed schema validation
+ --> Cargo.toml:1:1
+  |
+1 | [package]
+  | ^^^^^^^^^ the required property "name" is missing
+error: failed schema validation
+ --> Cargo.toml:1:1
+  |
+1 | [package]
+  | ^^^^^^^^^ the required property "version" is missing
+failure: processed 1 document with 3 errors
+....
+--
+
+.Options
+schema::
+  schema validationで使用するJSON schemaを指定します。
++
+--
+.`--schema=<local_file_path>` を使用する
+[literal]
+....
+# local fileの `Cargo.toml.json` を使用して、validationをします
+> taplo lint --schema=cargo.toml.json validation_test.toml
+error: failed schema validation
+ --> validation_test.toml:2:11
+  |
+2 | authors = 123456
+  |           ^^^^^^ invalid type, expected "Array", not "Integer"
+error: failed schema validation
+ --> validation_test.toml:1:1
+  |
+1 | [package]
+  | ^^^^^^^^^ the required property "name" is missing
+error: failed schema validation
+ --> validation_test.toml:1:1
+  |
+1 | [package]
+  | ^^^^^^^^^ the required property "version" is missing
+failure: processed 1 document with 3 errors
+....
+
+.`--schema=<URL>` を使用する
+[literal]
+....
+# JSON Schema StoreにあるgolangciのJSON Schemaを使用して、validationをします
+> taplo lint --schema=https://json.schemastore.org/golangci-lint.json validation_test.toml
+error: failed schema validation
+ --> validation_test.toml:1:7
+  |
+1 | run = true
+  |       ^^^^ invalid type, expected "Object", not "Boolean"
+failure: processed 1 document with 1 error
+....
+--
+schema-repository::
+  特定のfile nameとJSON Schemaを紐付ける情報を記載している、
+  schema repositoryを指定します。
++
+--
+[literal]
+....
+# schema repositoryをTaploのofficial schema repositoryにします
+# `--default-schema-repository` と同じです
+> taplo lint --schema=cargo.toml.json validation_test.toml
+error: failed schema validation
+ --> validation_test.toml:2:11
+  |
+2 | authors = 123456
+  |           ^^^^^^ invalid type, expected "Array", not "Integer"
+error: failed schema validation
+ --> validation_test.toml:1:1
+  |
+1 | [package]
+  | ^^^^^^^^^ the required property "name" is missing
+error: failed schema validation
+ --> validation_test.toml:1:1
+  |
+1 | [package]
+  | ^^^^^^^^^ the required property "version" is missing
+failure: processed 1 document with 3 errors
+....
+--
+cache-path::
+  JSON schema validationで使用する、
+  JSON schemaなどを格納しているcache directoryを指定します。
+  cacheがない場合は保存し、  cacheがある場合は更新します。
+  指定しない場合は、cacheを保存・更新しません。
+  `taplo lint --cache-path=<cache_dir_path>` の場合、
+  cacheの情報をもとにJSON schema validationをします。
++
+--
+[literal]
+....
+# cacheがないことを確認します
+> ls cache
+"cache": No such file or directory (os error 2)
+
+# Taploのofficial schema repositoryを使用して、validationします
+# schema repositoryや使用したJSON schemaは
+# `cache` directoryに保存します。
+> taplo lint --default-schema-repository --cache-path=cache Cargo.toml
+info: updating schema index from https://taplo.tamasfe.dev/schema_index.json
+info: checking for schema updates
+error: failed schema validation
+ --> Cargo.toml:2:11
+  |
+2 | authors = 123456
+  |           ^^^^^^ invalid type, expected "Array", not "Integer"
+error: failed schema validation
+ --> Cargo.toml:1:1
+  |
+1 | [package]
+  | ^^^^^^^^^ the required property "name" is missing
+error: failed schema validation
+ --> Cargo.toml:1:1
+  |
+1 | [package]
+  | ^^^^^^^^^ the required property "version" is missing
+failure: processed 1 document with 3 errors
+
+# `cache` dirに保存されていることを確認します
+> tree cache
+cache
+├── schema_index.json
+└── schemas
+    └── 842614c23c7a7c4d872d71ec1a207277f8126d32f5336bda93e715f192886da2.json
+
+1 directory, 2 files
+
+# `cache` directoryを元にvalidationをします。
+> taplo lint --cache-path=cache Cargo.toml
+error: failed schema validation
+ --> Cargo.toml:2:11
+  |
+2 | authors = 123456
+  |           ^^^^^^ invalid type, expected "Array", not "Integer"
+error: failed schema validation
+ --> Cargo.toml:1:1
+  |
+1 | [package]
+  | ^^^^^^^^^ the required property "name" is missing
+error: failed schema validation
+ --> Cargo.toml:1:1
+  |
+1 | [package]
+  | ^^^^^^^^^ the required property "version" is missing
+failure: processed 1 document with 3 errors
+
+# `cache` directoryを削除します
+> rm -rf cache
+
+# `cache` directoryがないことを確認します
+> tree cache/
+cache/ [error opening dir]
+
+0 directories, 0 files
+
+# JSON schemaのcacheがないので、validationしません
+> taplo lint --cache-path=cache Cargo.toml
+success: processed 1 document with no errors
+....
+--
+
+'''
+
+// tag::license[]
+
+:taplo-license-link: link:https://github.com/tamasfe/taplo/blob/master/LICENSE.md[Taplo LICENSE^]
+.{taplo-license-link}
+[%collapsible%open]
+=====
+
+[literal]
+....
+MIT License
+
+Copyright (c) 2020 Ferenc Tamás
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+....
+
+=====
+
+// end::license[]
+
+// end::body[]
+
+
+// tag::copyright[]
+
+'''
+
+{copyright-with-author-link}
+
+// end::copyright[]
