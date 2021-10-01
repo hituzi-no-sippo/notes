@@ -1,0 +1,199 @@
+= Schema
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-10-01T11:22:29+0900
+:revremark: First Edition
+:doctype: article
+:description: Taploで使用できるJSON schemaの説明
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: preamble
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-10-01T11:22:29+0900
+:creation-date: 2021-10-01T02:36:17+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [TOML, Taplo, Validator, JSON Schema]
+
+
+// tag::body[]
+
+:taplo-config-url: https://taplo.tamasfe.dev
+
+.Official Documentation
+link:{taplo-config-url}/#schemas[
+Configuration > Schemas — Taplo^]
+
+link:https://json-schema.org/[
+JSON Schema^]を使用して、Taploはvalidationができます。
+
+== 使用方法
+
+Taplo CLI::
+  `-schema` flagを使用して、JSON schemaを使用したvalidationができます。
+  詳細は `taplo lint --help` やlink:{taplo-config-url}/#schema[
+  Configuration > Schema — Taplo^]を読んでください。
+Visual Studo Code (VS Code)::
+  補完やvalidationかできます。
+  link:https://marketplace.visualstudio.com/items?itemName=tamasfe.even-better-toml[
+  TaploのVS Code拡張機能^]のconfig fileに設定を記載する必要があります。
+  設定方法はlink:{taplo-config-url}/#visual-studio-code[
+  Configuration > Visual Studio Code — Taplo^]を読んでください。
+
+== schemaの書き方
+
+JSON Schemaにもとづき、schemasを記載します。
+
+JSON形式のみ対応しています。
+YAML形式を使用するには、JSON形式に変換する必要があります。
+
+=== 拡張filed (`x-taplo`)
+
+JSON schemaに、Taploによって解析される `x-taplo` keyを追加できます。
+省略できます。必須ではありません。
+
+
+keyの詳細の内容などはlink:{taplo-config-url}/#schema-extension[
+Configuration > Schema Extension — Taplo^]を読んでください。
+軽く読みましたが、私は理解できませんでした。
+多分、補完や情報表示に使用するfiledだと感じました。
+
+=== 制限と未実装機能
+
+JSON schemaのsubset、一部のみ対応しています。
+
+.制限内容(将来的に制限は解除される予定です)
+* schema内で外部参照はできません +
+  schema全体とそのsub schema全てが、1つのJSON fileに収める必要があります。
+* link:https://datatracker.ietf.org/doc/html/rfc6901[
+  JSON pointers^]の解析は未実装です
+  JSON pointersを使用すれば、特定のJSON schemaを指定できます。
+* schemaのrootの定義にあるsub schemaへの参照しかできません
+
+bugや未実装の機能の詳細は、link:https://github.com/tamasfe/taplo/labels/schema[
+このissue^]を確認してください。
+
+== Official Schemas
+
+=== Builtin Schemas
+
+Taploに組みこまれているJSON schemaは、
+Taplo config(e.g. `.taplo.toml` or `taplo.toml`)用しかありません。
+
+
+.使用方法
+CLI:: `taplo lint --schema=taplo://taplo.toml`
+Config:: {blank}
++
+--
+..talpo.config
+[source, TOML]
+----
+[schema]
+path = 'taplo://taplo.toml'
+----
+--
+
+=== Schema Repository
+
+特定のfile nameとJSON Schemaを紐付ける情報が、
+schema repositoryに記載されています。
+
+Taplo CLIで `--default-schema-repository` flagを付与すると、link:https://taplo.tamasfe.dev/schema_index.json[
+Talpoのofficial schema repository^]を参照します。
+
+Rustのpackage manager、Cargoのconfig fileのJSON schemaの情報が、
+Talpoのofficial schema repositoryにあります。
+Cargoのconfig file pathは `cargo.toml` なので、
+`taplo lint --default-schema-repository cargo.toml` をすると、
+Cargoのconfig fileのJSON schemaを使用してvalidationをします。
+
+次のtoolのconfig fileのJSON Schemaが、
+Talpoのofficial schema repositoryで紐づいています。
+
+:github-url: https://github.com
+:taplo-repository-link: link:{github-url}/tamasfe/taplo/tree/master/schemas[Taplo Repository^]
+:cargo-toml-link: link:https://doc.rust-lang.org/stable/cargo/[cargo.toml^]
+:rustfmt-link: link:https://rust-lang.github.io/rustfmt[rustfmt^]
+:poerty-link: link:https://python-poetry.org/[Poerty^]
+:cargo-make-link: link:https://sagiegurari.github.io/cargo-make/[cargo-make^]
+:dein-vim-link: link:https://github.com/Shougo/dein.vim[dein.vim^]
+.{taplo-repository-link}に配置しているJSON schemaを参照している
+[horizontal]
+{cargo-toml-link}:: Rustのpackage manager
+{rustfmt-link}:: Rustのformatter
+{poerty-link}:: Python projectのpackageの依存関係を管理する
+{cargo-make-link}:: task runner & build tool
+{dein-vim-link}:: Vim・Neovimで使用できるplugin manager
+
+:json-schema-store-link: link:https://www.schemastore.org/json[JSON Schema Store^]
+:golangci-lint-link: link:https://golangci-lint.run[golangci-lint^]
+.{json-schema-store-link}に配置しているJSON schemaを参照している
+{golangci-lint-link}:: Goのlinters runner
+
+他にも、いくつかのtoolのJSON schemaの情報が含んでいます。
+全て知りたい人はlink:{taplo-config-url}/#repository-schemas[
+Configuration > Repository Schemas — Taplo^]を読んでください。
+
+'''
+
+// tag::license[]
+
+:taplo-license-link: link:https://github.com/tamasfe/taplo/blob/master/LICENSE.md[Taplo LICENSE^]
+.{taplo-license-link}
+[%collapsible%open]
+=====
+
+[literal]
+....
+MIT License
+
+Copyright (c) 2020 Ferenc Tamás
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+....
+
+=====
+
+// end::license[]
+
+// end::body[]
+
+
+// tag::copyright[]
+
+'''
+
+{copyright-with-author-link}
+
+// end::copyright[]
