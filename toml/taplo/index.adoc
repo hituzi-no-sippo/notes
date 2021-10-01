@@ -2,7 +2,7 @@
 :author: hituzi no sippo
 :email: contact@hituzi-no-sippo.me
 :revnumber: v1.0.0
-:revdate:
+:revdate: 2021-10-01T11:31:47+0900
 :revremark: First Edition
 :doctype: article
 :description: linter・formatterでもあるTOML toolkit
@@ -12,6 +12,7 @@
 :!sectnums:
 :sectids:
 :toc: preamble
+:toclevels: 4
 :sectlinks:
 :sectanchors:
 :idprefix:
@@ -23,7 +24,7 @@
 :!listing-caption:
 :copyright: Copyright (c) 2021 {author}
 
-:first-publication-date:
+:first-publication-date: 2021-10-01T11:31:47+0900
 :creation-date: 2021-09-27T08:12:16+0900
 
 :copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
@@ -47,6 +48,19 @@ link:{taplo-url}/lsp/[LSP^]とlink:https://marketplace.visualstudio.com/items?it
 VSCodeの拡張機能^]もあります。
 
 この記事ではlibraryの説明をしません。CLIやConfigの説明をします。
+
+:leveloffset: +1
+:include-body: tags='!license,!copyright'
+
+include::./cli/index.adoc[{include-body}]
+
+include::./configuration/index.adoc[{include-body}]
+
+include::./schema.adoc[{include-body}]
+
+include::./lsp.adoc[{include-body}]
+
+:leveloffset: -1
 
 '''
 
