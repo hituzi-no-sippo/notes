@@ -1,0 +1,152 @@
+= LSP
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-10-01T11:27:00+0900
+:revremark: First Edition
+:doctype: article
+:description: TaploのLSPの説明
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: preamble
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-10-01T11:27:00+0900
+:creation-date: 2021-10-01T03:30:21+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [TOML, Taplo, Linter, Formatter, Validator, JSON Schema, LSP]
+
+
+// tag::body[]
+
+.Official Documentation
+link:https://taplo.tamasfe.dev/lsp/#additional-info[
+Language Server — Taplo^]
+
+.Version
+Taplo LSP 0.2.6
+
+TaploはLanguage Server Protocol(以後、LSP)に対応しています。link:https://microsoft.github.io/language-server-protocol/specifications/specification-3-16/[
+LSPのversionは3.16^]です。
+
+== Installation
+
+=== Native Binary
+
+cargoでTaplo LSP serverをinstallできます。TCPと標準のI/Oで使用できます。
+
+[literal]
+....
+> cargo install taplo-lsp
+Updating crates.io index
+Downloaded taplo-lsp v0.2.6
+# install logは省略します
+> taplo-lsp --version
+Taplo LSP 0.2.6
+....
+
+=== JsvaScript Package
+
+npmでもTaplo LSP serverをinstallできます。
+ただ、applicationに埋め込む、help libraryでしかありません。
+applicationの外と通信するために必要なhandlerのinterface公開します。
+
+詳細はlink:https://taplo.tamasfe.dev/lsp/#javascript-package[
+Language Server > JavaScript Package— Taplo^]を読んでください。
+
+[literal]
+....
+npm install @taplo/lsp
+....
+
+== 使用方法
+
+=== Vim
+
+link:https://github.com/mattn/vim-lsp-settings/blob/master/settings/taplo-lsp.vim[
+vim-lsp-settings^]がTaplo LSPに対応しています。
+
+=== Neovim
+
+link:https://github.com/neovim/nvim-lspconfig[
+NeovimのLSP設定をするnvim-lspconfig^]をinstallしていれば、
+`require'lspconfig'.taplo.setup{}` で、Taplo LSPを使用できます。
+lintやformatができます。
+
+[CAUTION]
+====
+link:https://github.com/tamasfe/taplo/issues/167#issuecomment-926995755[
+現在、Taplo LSPのformat設定の変更はできないようです。^]
+====
+
+
+'''
+
+// tag::license[]
+
+:taplo-license-link: link:https://github.com/tamasfe/taplo/blob/master/LICENSE.md[Taplo LICENSE^]
+.{taplo-license-link}
+[%collapsible%open]
+=====
+
+[literal]
+....
+MIT License
+
+Copyright (c) 2020 Ferenc Tamás
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+....
+
+=====
+
+// end::license[]
+
+// end::body[]
+
+
+// tag::copyright[]
+
+'''
+
+{copyright-with-author-link}
+
+// end::copyright[]
+
+
+// tag::copyright[]
+
+'''
+
+{copyright-with-author-link}
+
+// end::copyright[]
