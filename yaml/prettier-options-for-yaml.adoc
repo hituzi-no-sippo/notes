@@ -1,0 +1,184 @@
+= PrettierがYAMLで使用するOptions
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-10-02T11:52:47+0900
+:revremark: First Edition
+:doctype: article
+:description: PrettierがYAMLで使用するoptionsの説明
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: preamble
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-10-02T11:52:47+0900
+:creation-date: 2021-10-01T17:28:38+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [YAML, Formatter, Prettier, yamllint]
+
+[NOTE]
+====
+:yamllint-rules-document-url: https://yamllint.readthedocs.io/en/stable/rules.html
+:yamllint-rules-premarlink-prefix-url: https://yamllint.readthedocs.io/en/stable/rules.html#module-yamllint.rules.
+
+Prettierより、YAMLのlinterである、link:https://github.com/adrienverge/yamllint[
+yamllint^]のほうが詳細なstyleを設定できます。
+しかし、yamllintではstyle違反を修正できません。errorとwarningを表示するだけです。
+
+.Prettierでは設定できないが、yamllintでできるstyle設定の一部
+* link:{yamllint-rules-premarlink-prefix-url}key_ordering[
+  keyをABC順に並べるか^]
+* link:{yamllint-rules-premarlink-prefix-url}quoted_strings[
+  文字列をquote(`'` or `"`)で囲むか^]
+* link:{yamllint-rules-premarlink-prefix-url}truthy[
+  文字列 `on` と `off` などの真偽値の代わりとなる文字列を禁止にするか^]
+
+yamllintのoffcial documentationと次の記事を読めば、
+yamllintのruleがわかると思います。
+
+* link:https://yamllint.readthedocs.io/en/stable/configuration.html[
+  Configuration — yamllint 1.26.3 documentation^]
+* link:https://fumidzuki.com/knowledge/2265/[
+ 【yamllint】YAMLファイルの構文確認ツールの使用方法の紹介 – fumidzuki^]
+====
+
+.Offcial Documentation
+link:https://prettier.io/docs/en/options.html[
+Options · Prettier^]
+
+.Version
+2.4.1
+
+YAMLに関係ないPrettier optionsは記載していません。
+
+== 改行
+
+[opts='header, autowidth']
+|===
+|Name |説明 |Default
+
+|Print Width
+|1行の長さを指定します
+|80
+
+|End of Line
+|改行コード
+|`lf` (LinuxやmacOSで使用される `\n` を使用します)
+
+|Prose Wrap
+|複数行の文字列を改行するか
+|`preserve` (なにもしない、入力のまま)
+|===
+
+=== Prose Wrap Example
+
+==== 入力
+
+[source, YAML]
+----
+wrap: >
+    1行の文字数制限を超えているので、
+    改行する。
+    文字数制限を超えるための無駄な文字列
+nowrap: >
+    1行の文字数制限を超えていないので、
+    改行しない。
+----
+
+==== 出力
+
+.preserve
+[literal]
+....
+wrap: >
+  1行の文字数制限を超えているので、
+  改行する。
+  文字数制限を超えるための無駄な文字列
+nowrap: >
+  1行の文字数制限を超えていないので、
+  改行しない。
+....
+
+.always
+[literal]
+....
+wrap: >
+  1行の文字数制限を超えているので、 改行する。
+  文字数制限を超えるための無駄な文字列
+nowrap: >
+  1行の文字数制限を超えていないので、 改行しない。
+....
+
+.never
+[literal]
+....
+wrap: >
+  1行の文字数制限を超えているので、 改行する。 文字数制限を超えるための無駄な文字列
+
+nowrap: >
+  1行の文字数制限を超えていないので、 改行しない。
+....
+
+== Indent
+
+[opts='header, autowidth']
+|===
+|Name |説明 |Default
+
+|Tab Width
+|indentで使用する空白数
+|2
+
+|Tabs
+|indentで空白の代わりに空白を使用するか
+|false
+|===
+
+== 文字列
+
+[opts='header, autowidth']
+|===
+|Name |説明 |Default
+|Quotes
+|double quote(`"`)の代わりにsingle quote(`'`)を使用するか
+|false
+|===
+
+
+== Braces `{}`
+
+[opts='header, autowidth']
+|===
+|Name |説明 |Default
+|Bracket Spacing
+|`{}` の先頭と末尾に空白を挿入するか
+|true
+|===
+
+'''
+
+Optionにはありませんが、次の2つも行ないます。
+
+* 行末までの無駄な空白を削除する
+* fileの最後に改行を挿入する
+
+// tag::copyright[]
+
+'''
+
+{copyright-with-author-link}
+
+// end::copyright[]
