@@ -1,0 +1,362 @@
+= Formatting Options
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-09-28T14:10:18+0900
+:revremark: First Edition
+:doctype: article
+:description: TaploのFormatting options
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: preamble
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-09-28T14:10:18+0900
+:creation-date: 2021-09-28T10:12:40+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [TOML, Taplo, Formatter, Configuration]
+
+// tag::body[]
+
+.Official Documentation
+link:https://taplo.tamasfe.dev/configuration/#formatting-options[
+Configuration > Formatting Options — Taplo^]
+
+1行あたりの文字数や並び替えの有無などの、formatの設定は次のようにします。
+
+[source, TOML]
+----
+[Formatting]
+<option_name> = <value>
+----
+
+[NOTE]
+====
+formatの動作を `<option_name> = <value>` というtitleのsectionで、記載しています。
+title以外のoptionsの値は、defaultの値です。
+====
+
+== Key
+
+[opts='header, autowidth']
+|===
+|Key |説明 |default
+
+|align_entries
+|`=` の部分を垂直に並べるようにするか
+|false
+
+|reorder_keys
+|空行で区切られていないkeyをABC順で並べるか
+|false
+|===
+
+=== `align_entries = true`
+
+.format前
+[source, TOML]
+----
+num = 123
+string = 'abc'
+inline_table = { key = 'value'}
+----
+
+.format後
+[source, TOML]
+----
+num          = 123
+string       = 'abc'
+inline_table = { key = 'value' }
+----
+
+=== `reorder_keys = true`
+
+.format前
+[source, TOML]
+----
+donut = true
+cookie = true
+
+banana = true
+apple = true
+----
+
+.format後
+[source, TOML]
+----
+cookie = true
+donut = true
+
+apple = true
+banana = true
+----
+
+== Array
+
+[opts='header, autowidth']
+|===
+|Key |説明 |default
+|compact_arrays
+|1行だけのarrayの先頭と末尾の空白を削除するか +
+ `[123]` or `[ 123 ]`
+|true
+
+|array_trailing_comma
+|複数行のarrayの最後に `,` をつけるか
+|true
+
+|width
+|1行の文字数 +
+ arrayを1行 or 複数行に変換するのに使用し、空白は文字数に含まれない
+|80
+
+|array_auto_expand
+|widthを超えた、1行のarrayを複数行のarrayにするか
+|true
+
+|array_auto_collapse
+|widthを超えず、commentがない複数行のarrayを1行のarrayにするか
+|true
+|===
+
+=== `array_trailing_comma = true`
+
+.format前
+[source, TOML]
+----
+# `width` を超えているarray
+array = [ '1234567890123456789012345678901234567890123456789012345678901234567890123456789' ]
+----
+
+.format後
+[source, TOML]
+----
+array = [
+  '1234567890123456789012345678901234567890123456789012345678901234567890123456789',
+]
+----
+
+=== `array_auto_expand = true`
+
+.format前
+[source, TOML]
+----
+array = [
+  123 # 複数行にするためのcomment
+]
+----
+
+.format後
+[source, TOML]
+----
+array = [
+  123, # 複数行にするためのcomment
+]
+----
+
+=== `array_auto_collapse = true`
+
+.format前
+[source, TOML]
+----
+array = [
+  123,
+]
+comments = [
+  # comment
+  123
+]
+----
+
+.format後
+[source, TOML]
+----
+array = [123]
+comments = [
+  # comment
+  123,
+]
+----
+
+== Inline Table
+
+[opts='header, autowidth']
+|===
+|Key |説明 |default
+|compact_inline_tables
+|inline tableの先頭と末尾の空白を削除するか +
+ `inline_table = {key = "value"}` or `inline_table = { key = "value" }`
+|true
+|===
+
+== Indent
+
+[opts='header, autowidth']
+|===
+|Key |説明 |default
+|indent_string
+|indentで使用する文字列
+|`'  '` (空白2つ)
+
+|indent_tables
+|sub tables(e.g. `[table]` だったら `[table.sub]`)をindentするか
+|false
+|===
+
+=== `indent_tables = true`
+
+.format前
+[source, TOML]
+----
+[table]
+indent = false
+
+[[table]]
+indent = false
+
+[table.sub]
+indent = true
+
+[not.indent]
+indent = false
+----
+
+.format後
+[source, TOML]
+----
+[table]
+indent = false
+
+[[table]]
+indent = false
+
+  [table.sub]
+  indent = true
+
+[not.indent]
+indent = false
+----
+
+== 改行
+
+[opts='header, autowidth']
+|===
+|Key |説明 |default
+|allowed_blank_lines
+|連続で記載できる空行の最大数
+|2
+
+|crlf
+|改行を `CRLF` にするか
+|false
+
+|trailing_newline
+|fileの最後に、改行をいれるか
+|true
+|===
+
+=== `allowed_blank_lines = 2`
+
+.format前
+[source, TOML]
+----
+[apple]
+orange = true
+
+
+
+
+melon = true
+
+
+
+
+[banana]
+lemon = true
+
+
+# comment
+
+cookie = true
+----
+
+.format後
+[source, TOML]
+----
+[apple]
+orange = true
+
+
+melon = true
+
+
+[banana]
+lemon = true
+
+
+# comment
+
+cookie = true
+----
+
+'''
+
+// tag::license[]
+
+:taplo-license-link: link:https://github.com/tamasfe/taplo/blob/master/LICENSE.md[Taplo LICENSE^]
+.{taplo-license-link}
+[%collapsible%open]
+=====
+
+[literal]
+....
+MIT License
+
+Copyright (c) 2020 Ferenc Tamás
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+....
+
+=====
+
+// end::license[]
+
+// end::body[]
+
+
+// tag::copyright[]
+
+'''
+
+{copyright-with-author-link}
+
+// end::copyright[]
