@@ -1,0 +1,342 @@
+= Configuration
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-10-01T02:45:28+0900
+:revremark: First Edition
+:doctype: article
+:description: Taploの設定方法
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: preamble
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-10-01T02:45:28+0900
+:creation-date: 2021-09-28T10:12:40+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [TOML, Taplo, Formatter, JSON schema, Configuration]
+
+// tag::body[]
+
+.Official Documentation
+link:https://taplo.tamasfe.dev/configuration[
+Configuration — Taplo^]
+
+Taploのconfigでは、次を設定できます。
+
+* 対象と除外filesの指定
+* 1行の文字数やindentなどのformat optionsの設定
+* link:https://json-schema.org/[JSON Schema^]を使用したvalidationの設定
+
+link:https://toml.io[TOML format^]で設定します。
+
+defaultのconfig fileは `.taplo.toml` or `taplo.toml` です。
+working directoryで探します。
+`-c` optionでconfig file(e.g. `taplo -c <config_file_path>`)を変更できます。
+
+== 対象 or 除外fileの指定
+
+=== included
+
+特定のfileをtaploの対象にしたいなら `include = [<path|pattern>]` を記載します。
+glob patternで、 `**` で再帰検索ができます。
+
+設定していない場合は、rootからchild directoryまでの、
+project全体のTOML fileを対象とします。
+
+`taplo <lint|format>` のようにfileを指定しないときに使用します。
+`taplo <lint|format> <file|path>` のときは使用されません。
+
+.Config
+[source, TOML]
+----
+include = ['Makefile.toml', 'cargo.toml', 'dir/**/*.toml']
+----
+
+.Rusult
+[literal]
+....
+> tree -a
+.
+├── Makefile.toml
+├── cargo.toml
+├── dir
+│   └── pyproject.toml
+└── taplo.toml
+
+1 directory, 4 files
+> taplo format
+success: processed 3 documents with no errors
+# fileを指定しているので `include` のfileをformatしません。
+> taplo format taplo.toml
+success: processed 1 document with no errors
+# patternを指定しているので `include` のfile以外もformatします。
+> taplo format '**/*.toml'
+success: processed 4 documents with no errors
+....
+
+=== exclude
+
+特定のfileをtaploの対象外にしたいなら `exclude = [<path|pattern>]` を記載します。
+`include` より、こちらの値を優先します。
+
+`taplo <lint|format>` のようにfileを指定しないときに使用します。
+`taplo <lint|format> <file|path>` のときは使用されません。
+
+.Config
+[source, TOML]
+----
+include = ['dir/**/*.toml']
+exclude = ['dir/ignore.toml']
+----
+
+.Rusult
+[literal]
+....
+> tree -a
+.
+├── dir
+│   ├── ignore.toml
+│   └── pyproject.toml
+└── taplo.toml
+
+# `exclude = ['dir/ignore.toml']` があり、 `exclude` が優先されるため
+# `ignore.toml` を除外します
+# lつのfileを除外していることを `(exclude 1)` というmessageで表示します
+> taplo lint
+success: processed 1 documents with no errors  (excluded 1)
+
+# fileを指定すれば `exclude` のfileもlintできます
+> taplo lint dir/ignore.toml
+success: processed 1 document with no errors
+# patternを指定しているので `exclude` のfileもlintできます
+> taplo lint 'dir/**/*.toml'
+success: processed 2 documents with no errors
+....
+
+== Formatting Options
+
+include::./formatting-options.adoc[tags='body,!license', leveloffset=+2]
+
+== schema
+
+`taplo lint` で使用できるschema validatorの設定は `[schema]` で設定します。
+keyは次の2つしかありません。
+
+.Keys
+path::
+  validateに使用するJSON schemaを指定します。
+  local file pathか、http,httpsのURLを使用できます。
+enabled::
+  JSON schema validateを有効にするか決めます。 省略するとvalidateしません。
+  `enabled = true` するには `path` の設定が必要です。
+
+.taplo.toml
+[source, TOML]
+----
+[schema]
+# taploに唯一組みこまれている `taplo.toml` をvalidationに使用します
+path = 'taplo://taplo.toml'
+# defaultでvalidationをします
+enabled = true
+----
+
+.Result
+[literal]
+....
+> taplo lint scheme_enabled_test.toml
+error: failed schema validation
+ --> scheme_enabled_test.toml:1:1
+  |
+1 | unknown_key = true
+  | ^^^^^^^^^^^^ unknown property
+failure: processed 1 document with 1 error
+
+# `enabled = false` or `enabled` を省略した場合
+> taplo lint scheme_enabled_test.toml
+success: processed 1 document with no errors
+....
+
+.taplo.toml
+[source, TOML]
+----
+[schema]
+# JSON Schema Storeにあるgolangci-lintのJSON Schemaを
+# validateで使用します
+path = 'https://json.schemastore.org/golangci-lint.json'
+enabled = true
+----
+
+.Result
+[literal]
+....
+> taplo lint scheme_enabled_test.toml
+error: failed schema validation
+ --> scheme_enabled_test.toml:1:7
+  |
+1 | run = 123
+  |       ^^^ invalid type, expected "Object", not "Integer"
+failure: processed 1 document with 1 error
+....
+
+== rule
+
+特定のfileだけに、特定のformatting optionsを指定したいなら
+`\[[rule]]` を使用します。
+
+.taplo.toml
+[source, TOML]
+----
+[formatting]
+align_entries = false
+
+# `rule_test.toml` 内の `align` tableにあるkeyの `=` を垂直に並ぶようにします
+[[rule]]
+include = ['rule_test.toml']
+keys = ['align']
+
+[rule.formatting]
+align_entries = true
+----
+
+.rule_test.toml (`taplo format rule_test.toml` 実行前)
+[source, TOML]
+----
+[align]
+a = true
+apple = true
+
+[reorder]
+a = true
+----
+
+.rule_test.toml (`taplo format rule_test.toml` 実行後)
+[align]
+[source, TOML]
+----
+a     = true
+apple = true
+
+[reorder]
+a = true
+----
+
+:taplo-repository-url: https://github.com/tamasfe/taplo
+[NOTE]
+====
+link:{taplo-repository-url}/issues/172[
+ruleのformattingが動かないissue^]があります。
+====
+
+[CAUTION]
+====
+次のように `keys` を設定しない場合、
+link:{taplo-repository-url}/blob/edbc4d7efa3981900930bbf6ce81b7aff8335666/taplo-cli/src/config.rs#L223-L229[
+formattingの設定を反映しません。^]
+
+.taplo.toml
+[source, TOML]
+----
+[formatting]
+align_entries = false
+
+# `rule_test.toml` 内の全てのkeyの `=` を垂直に並べるようにすると考えられますが
+# formattingが反映されず、 `=` は垂直に並びません
+[[rule]]
+include = ['rule_test.toml']
+
+[rule.formatting]
+align_entries = true
+----
+====
+
+
+formattingだけではなく、schema validationにも利用できます。
+
+.taplo.toml
+[source, TOML]
+----
+[[rule]]
+include = ['rule_test.toml']
+
+[rule.schema]
+path = 'taplo://taplo.toml'
+enabled = true
+----
+
+[CAUTION]
+====
+次のようにglobalのincludeに、ruleのincludeが含まれていない場合、
+ruleは動作しません。
+
+.taplo.toml
+[source, TOML]
+----
+include = ['include_file.toml']
+
+[[rule]]
+include = ['non_include_file.toml']
+----
+====
+
+'''
+
+// tag::license[]
+
+:taplo-license-link: link:https://github.com/tamasfe/taplo/blob/master/LICENSE.md[Taplo LICENSE^]
+.{taplo-license-link}
+[%collapsible%open]
+=====
+
+[literal]
+....
+MIT License
+
+Copyright (c) 2020 Ferenc Tamás
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+....
+
+=====
+
+// end::license[]
+
+// end::body[]
+
+
+// tag::copyright[]
+
+'''
+
+{copyright-with-author-link}
+
+// end::copyright[]
