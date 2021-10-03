@@ -1,0 +1,179 @@
+= CLI
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-09-30T19:24:29+0900
+:revremark: First Edition
+:doctype: article
+:description: TOMLのlint・formatができるCLIの説明
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: preamble
+:toclevels: 4
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-09-30T19:24:29+0900
+:creation-date: 2021-09-27T09:23:05+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [TOML, Taplo, Lint, Formatter, Validator, CLI]
+
+// tag::body[]
+
+.Official Documentation
+link:https://taplo.tamasfe.dev/cli/#installation[
+Command Line — Taplo^]
+
+.Version
+0.4.1
+
+Taplo CLIを使用すれば、Command Lineで次ができます。
+
+* TOMLのlint
+* TOMLのValidation +
+  link:https://json-schema.org/[JSON schema^]を使用します。
+* TOMLのformat
+
+== Installation
+
+CargoとNodeで、TaploのCLIをinstallできます。
+
+.Crago
+[literal]
+....
+cargo install taplo-cli
+....
+
+.Node
+[literal]
+....
+npm install -g @taplo/cli
+yarn global add @taplo/cli
+volta install @taplo/cli
+....
+
+== 使用方法
+
+`taplo lint` の `lint` のように、 `taplo` にはsub commandが必須です。
+`taplo` はerrorになります。
+
+.Sub commands
+lint (aliases: check)::
+  TOML filesをlintします。
+format (aliases: format)::
+  TOML filesを指定したstyleになるようにformatします。
+config::
+  configのexampleとvalidationで使用するJSON schemaのexampleを表示します。
+  exampleを表示するだけで、configの変更はできません。
+  使用方法がわからなくても問題ないので、使用方法を記載しません。
+help::
+  helpを表示します。
+  `taplo help <SUBCOMMAND>` で `SUBCOMMAND` のhelpを表示します。
+  ただ、 `taplo <SUBCOMMAND> --help` と表示する内容は同じではありません。
+  比較してみると `taplo <SUBCOMMAND> --help` のほうが、情報が多いです。
+
+.Flags
+help:: helpを表示します。
+version:: taploのversionを表示します。
+silent:: error, warningがないとき
+         `success: processed 1 document with no errors` を表示しません。
++
+--
+[literal]
+....
+> taplo lint test.toml
+success: processed 1 document with no errors
+
+> taplo --silent lint test.toml
+# 何も表示されません
+....
+--
+warn-as-error:: warningをerrorとして扱います
++
+--
+[literal]
+....
+> taplo lint unknown_file
+warning: no documents were found
+success: processed 0 documents with no errors
+
+> taplo --warn-as-error lint unknown_file
+warning: no documents were found
+success: processed 0 documents with no errors
+failure: warnings occurred ("--warn-as-error" flag was used)
+....
+--
+
+.Options
+color:: 出力の文字に色をつけるか決めます。
+        使用できる値は `auto`, `always`, `never` です。
+        defaultは `auto` です。
+
+=== lint (check)
+
+include::./lint.adoc[tags='body,!license', leveloffset=+2]
+
+=== format (fmt)
+
+include::./format.adoc[tags='body,!license', leveloffset=+2]
+
+'''
+
+// tag::license[]
+
+:taplo-license-link: link:https://github.com/tamasfe/taplo/blob/master/LICENSE.md[Taplo LICENSE^]
+.{taplo-license-link}
+[%collapsible%open]
+=====
+
+[literal]
+....
+MIT License
+
+Copyright (c) 2020 Ferenc Tamás
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+....
+
+=====
+
+// end::license[]
+
+// end::body[]
+
+
+// tag::copyright[]
+
+'''
+
+{copyright-with-author-link}
+
+// end::copyright[]
