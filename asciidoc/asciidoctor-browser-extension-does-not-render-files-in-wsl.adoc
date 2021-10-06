@@ -1,0 +1,157 @@
+= Asciidoctor.js Live PreviewがWSL2のfilesをHTMLにrenderしない問題の解決方法
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-10-05T07:19:32+0900
+:revremark: First Edition
+:doctype: article
+:description: AsciidocをHTMLにrenderするChrome拡張機能の \
+  Asciidoctor.js Live PreviewがWSL2のfilesをHTMLにrenderしない問題の解決方法
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: preamble
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-10-05T07:19:32+0900
+:creation-date: 2021-10-04T08:24:57+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [Asciidoc, Asciidoctor, WSL2, Asciidoctor.js Live Preview]
+
+:asciidoctor-organization-url: https://github.com/asciidoctor
+:asciidoc-js-live-preview-reposinory-url: {asciidoctor-organization-url}/asciidoctor-browser-extension
+:issue-with-solution-url: {asciidoc-js-live-preview-reposinory-url}/issues/504
+
+.解決方法を記載しているissue
+link:{issue-with-solution-url}[
+Windows: doesn't render files in WSL$ · Issue #504 · asciidoctor/asciidoctor-browser-extension^]
+
+. `\\wsl$\Ubuntu\home\$USER\...`
+  のようなWSL2にあるasciidoc fileをHTMLにrenderできない
+. file pathの `wsl$` の `$` が `%24` に変換されて、
+  asciidoc fileを読みこめないのが原因
+. `$` を無くすため、WSL2へのsymlink(`mklink`)を作成して、
+  そのsymlinkを参照すればHTMLにrenderする
+
+== 環境
+
+[horizontal]
+Asciidoctor.js Live Preview:: v2.7.0
+Windows::
++
+--
+[horizontal]
+Edition:::  Windows 10 home
+Version:::  21H1
+OS build::: 19043.1237
+--
+Browser::
++
+--
+[horizontal]
+Chrome::: 94.0.4606.71
+Vivaldi::: 4.2.2406.54
+--
+
+ChromeとVivaldi両方で問題は発生します。両方、同じ下記の解決方法で解決できました。
+
+Chromeを使用している前提で文章を記載しています。
+Vivaldiを使用している人は `chrome://extensions/` => `vivaldi://extensions/`
+にするなど、置き替えてください。
+
+:asciidoctor-js-live-preview-id: iaalpfgpbocpdfblpnhhgllgbdbchmia
+:asciidoctor-js-in-browser-url: chrome://extensions/?id={asciidoctor-js-live-preview-id}
+== Asciidoctor.js Live Previewの説明
+
+link:https://chrome.google.com/webstore/detail/asciidoctorjs-live-previe/{asciidoctor-js-live-preview-id}[
+AsciidocをHTMLにrenderして、ブラウサに表示できます。^]
+
+Asciidocを変更すると、変更内容が反映されたHTMLを自動でrenderします。
+
+AsciidocをHTMLにrenderするのに、link:{asciidoctor-organization-url}/asciidoctor.js/[
+Asciidoctor.js^]を使用します。
+
+[CAUTION]
+====
+Chrome拡張機能の設定(`{asciidoctor-js-in-browser-url}`)で、
+Asciidoctor.js Live Previewの設定の `ファイルのURLへのアクセスを許可する`
+を有効にしないと、localのasciidoc fileをHTMLにrenderできません。
+====
+
+== 問題内容
+
+Asciidoctor.js Live Previewで、 `\\wsl$\Ubuntu-20.04\home\$USER\...`
+のようなWSL2にあるasciidoc fileをHTMLにrenderできません。
+
+.確認内容
+* WSL2にあるasciidoc fileの内容をbrowserに表示するため、file pathの間違いではない
+* `\\wsl$` がない、WSL2ではないlocalのasciidoc fileはHTMLにrenderされた
+
+== 原因
+
+file pathの `wsl$` の `$` が `%24` に変換されて、
+Asciidoctor.js Live Previewが、asciidoc fileを読みこめないのが原因です。
+
+WSL2にあるasciidoc fileを開いたとき、
+Asciidoctor.js Live Previewのbackground pageのconsoleで、
+`Not allowed to load local resource: \file://wsl%24/Ubuntu-20.04/home/$USER/...`
+のようなerrorが発生します。
+
+errorを発生しているのは、次のcodeです。
+
+:covert-js-in-github-url: {asciidoc-js-live-preview-reposinory-url}/blob/44f78ce9a997cddd4d9ef3408473d5eabba37c16/app/js/converter.js#L92-L94
+:covert-js-in-extension-url: {asciidoctor-js-in-browser-url}/js/converter.js
+.converter.js (link:{covert-js-in-github-url}[GitHub^] or ``{covert-js-in-extension-url}`)
+[source, JavaScript]
+----
+// browserのaddress barに表示されている値が `url` の値になります
+// error発生するときの `url`   : file://wsl%24/Ubuntu-20.04/home/...
+// error発生していときの `url` : file:///C:/Users/...
+request.open('GET', url, true)
+request.setRequestHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
+request.send(null)
+----
+
+link:{issue-with-solution-url}#issuecomment-850975051[
+`$` が `%24` に変換されるのは、browserのsecurity制限のためのようです。^]
+
+[NOTE]
+====
+`\file:///C:/$asciidoc_test/index.adoc` のように、
+directoryに `$` が含まれるasciidoc fileではHTMLはrenderされます。
+`$` は `%24` に変換されません。
+====
+
+== 修正方法
+
+`$` を無くすため、WSL2へのsymlink(`mklink`)を作成して、
+そのsymlinkを参照すればHTMLにrenderします。
+
+. 管理者権限で `cmd.exe` 起動する
+. symlinkを作成する +
+  `mklink <symlink_name> \file://wsl%24/Ubuntu-20.04/home/...` +
+  右クリックで作成できるshortcutでは駄目です。
+. symlink経由でasciidoc fileを開く +
+  browserのaddressに `.../<symlink_name>/...` を入力します。
+. Asciidoc fileが表示され、HTMLにrenderされるのを確認する
+. Asciidoc fileを編集し、自動更新されるのを確認する
+
+// tag::copyright[]
+
+'''
+
+{copyright-with-author-link}
+
+// end::copyright[]

@@ -1,0 +1,412 @@
+= 自動更新するAsciidoctor Preview環境を作成した
+:author: hituzi no sippo
+:email: contact@hituzi-no-sippo.me
+:revnumber: v1.0.0
+:revdate: 2021-10-06T11:08:58+0900
+:revremark: First Edition
+:doctype: article
+:description: 自動更新するAsciidoctor preview環境の作成方法
+:title:
+:experimental:
+:showtitle:
+:!sectnums:
+:sectids:
+:toc: preamble
+:sectlinks:
+:sectanchors:
+:idprefix:
+:idseparator: -
+:xrefstyle: full
+:!example-caption:
+:!figure-caption:
+:!table-caption:
+:!listing-caption:
+:!table-caption:
+:!listing-caption:
+:copyright: Copyright (c) 2021 {author}
+
+:first-publication-date: 2021-10-06T11:08:58+0900
+:creation-date: 2021-10-05T07:39:56+0900
+
+:copyright-with-author-link: Copyright (c) 2021 link:https://github.com/hituzi-no-sippo[{author}^]
+:tags: [Asciidoc, Asciidoctor, Preview, Live Server, npm-watch]
+
+:github-url: https://github.com
+:asciidoctor-organization-url: {github-url}/asciidoctor
+
+[NOTE]
+====
+link:https://chrome.google.com/webstore/detail/iaalpfgpbocpdfblpnhhgllgbdbchmia[
+Chrome拡張機能のAsciidoctor.js Live Preview^]でもAsciidoctorをpreviewできます。
+こちらもasciidoc fileを変更すると、previewを自動で更新します。
+
+WSL2内のasciidoc fileをAsciidoctor.js Live Previewでpreviewするには、
+symlinkを作成する方法があります。
+詳細はlink:{asciidoctor-organization-url}/asciidoctor-browser-extension/issues/504[
+Asciidoctor.js Live Previewのissue^]を読んでください。
+そのissueを読み、実際に解決したlink:./asciidoctor-browser-extension-does-not-render-files-in-wsl[
+私の記事^]もあります。
+====
+
+.開発時に参考した記事
+link:https://qiita.com/gemmaro/items/e537ab4a406d7f823c71[
+Asciidoctor.jsでプレビューしながら編集する - Qiita^]
+
+:project-name: asciidoctor-preview
+:asciidoctor-preview-repository-url: {github-url}/hituzi-no-sippo/{project-name}
+link:{asciidoctor-preview-repository-url}[
+Asciidocを変更するとpreviewが自動で更新されるpreview環境^]を構築しました。
+
+この環境には次の2点の問題があります。
+
+* previewしていないasciidoc fileを変更しても、browserが更新する
+* asciidoc fileを変更したとき、browserが更新を2回以上するときがある +
+  Live Serverの `--wait` を使用して、
+  previewの自動更新を遅くすれば、browserの更新を1回にできます。 +
+  1つのasciidoc fileを変更すると、
+  全てのasciidoc fileのHTML fileを生成するのが原因です。
+  変更したasciidoc fileだけのHTML fileを生成する方法はありますが、
+  時間がかかりそうなのでやめました。
+  変更したasciidoc fileだけのHTML fileを生成する方法は後述しています。
+
+この2つの問題は修正しない可能性が高いです。
+私がこのpreview環境を使用してないからです。
+記事の最初に記載した
+"WSL2内のasciidoc fileをAsciidoctor.js Live Previewでpreviewできない問題"
+が解決できないため、私はこのpreview環境を作成しました。
+この問題が解決でき、
+今はWSL2内のasciidoc fileをAsciidoctor.js Live Previewでpreviewできるので、
+この記事のpreview環境を使用していません。
+
+このpreview環境は半日しか使用していません。
+環境を構築した次の日にWSL2でpreviewできない問題が解決できたので、
+使用する理由がなくなりました。
+
+
+== 使用方法
+
+. Repositoryをcloneする +
+  `git clone {asciidoctor-preview-repository-url}`
+. npm packageをinstallする
++
+--
+[source, bash, subs='attributes']
+----
+cd {project-name}
+npm install
+----
+--
+. asciidocを `asciidoc` directoryに作成する
++
+--
+[source, bash, subs='attributes']
+----
+mkdir asciidoc
+echo 'link:{asciidoctor-preview-repository-url}[Asciidoctor Preview^]' > asciidoc/index.adoc
+----
+--
+. preview serverを起動する +
+  `npm run preview`
+. asciidoc fileを変更して、browserのpageが自動更新されるか確認する
+
+== AsciidocをHTMLに変換する方法
+
+link:https://asciidoctor.org[
+Asciidoctor^]のJavaScript版のlink:{asciidoctor-organization-url}/asciidoctor.js[
+Asciidocto.js^]を使用します。
+
+`asciidoctor <asciidoc-file-path>` で指定したasciidocをHTMLに出力します。
+
+asciidoc fileがあるdirectoryに、asciidoc fileと同じfile nameで、
+HTML fileを出力します。
+`asciidoctor apple/banana.adoc` なら `apple/banana.html` になります。
+
+[NOTE]
+====
+`--destination-dir` optionで、出力先のdirectoryを変更できます。
+このとき、fileの階層構造は維持されません。
+指定したdirectory直下に全てのHTML fileを出力します。
+
+.`asciidoctor --destination-dir html apple/banana.adoc egg/tomato.adoc` 実行前
+[literal]
+....
+$ tree
+.
+├── apple
+│   └── banana.adoc
+└── egg
+    └── tomato.adoc
+
+2 directories, 2 files
+....
+
+.`asciidoctor --destination-dir html apple/banana.adoc egg/tomato.adoc` 実行後
+[literal]
+....
+$ tree
+.
+├── apple
+│   └── banana.adoc
+├── egg
+│   └── tomato.adoc
+└── html
+    ├── banana.html
+    └── tomato.html
+
+3 directories, 4 files
+....
+====
+
+`asciidoctor` でglob patternを使用する方法は見つかりませんでした。
+そのため `find` commandの `--exec` optionを使用しました。
+
+.`asciidoctor \**/*.adoc` だとerrorが発生します
+[literal]
+....
+$ asciidoctor **/*.adoc
+(node:27373) UnhandledPromiseRejectionWarning: ENOENT: ENOENT: no such file or directory, open '**/*.adoc'
+# 以後、error messageなので省略
+
+$ asciidoctor '**/*.adoc'
+(node:27382) UnhandledPromiseRejectionWarning: ENOENT: ENOENT: no such file or directory, open '**/*.adoc'
+# 以後、error messageなので省略
+....
+
+.`find` commandの `--exec` optionを使用する
+[literal]
+----
+$ tree
+.
+├── apple
+│   └── banana.adoc
+└── egg
+    └── tomato.adoc
+
+2 directories, 2 files
+$ find . -type f -name *.adoc -exec asciidoctor {} +
+
+$ tree
+.
+├── apple
+│   ├── banana.adoc
+│   └── banana.html
+└── egg
+    ├── tomato.adoc
+    └── tomato.html
+
+2 directories, 4 files
+----
+
+:npm-watch-url: {github-url}/M-Zuber/npm-watch
+== Asciidocが変更されたら、AsciidocをHTMLに自動で変換する方法
+
+設定したfileが変更されたら、設定したnpm-scriptを実行するlink:{npm-watch-url}[
+npm-watch^]を使用します。
+
+監視するfileや、実行するnpm-scriptの設定は `package.json` に記載します。
+
+`asciidoc` direcory内の `adoc` が拡張子を持つfileに変更があったら、
+npm-scriptの `covert` を実行する設定を、次でしています。
+
+.package.json
+[source, JavaScript]
+----
+{
+  "dependencies": {
+    "asciidoctor": "^2.2.5",
+    "npm-watch": "^0.11.0"
+  },
+  "scripts": {
+    "convert": "find ./asciidoc/ -type f -name '*.adoc' -not -path '*/node_modules/*' -exec asciidoctor {} +",
+    "watch": "npm-watch"
+  },
+  "watch": {
+    "convert": {
+      "patterns": [
+        "asciidoc"
+      ],
+      "extensions": "adoc"
+    }
+  }
+}
+----
+
+.結果
+[literal]
+....
+$ tree asciidoc/
+asciidoc/
+├── apple
+│   └── banana.adoc
+└── egg
+    └── tomato.adoc
+
+2 directories, 2 files
+
+$ npm run watch
+
+> watch
+> npm-watch
+
+No task specified. Will go through all possible tasks
+[convert] [nodemon] 2.0.13
+[convert] [nodemon] clean exit - waiting for changes before restart
+[convert] [nodemon] restarting due to changes...
+[convert] [nodemon] starting `npm run -s convert`
+[convert] [nodemon] clean exit - waiting for changes before restart
+^C⏎
+
+$ tree asciidoc/
+asciidoc/
+├── apple
+│   ├── banana.adoc
+│   └── banana.html
+└── egg
+    ├── tomato.adoc
+    └── tomato.html
+
+2 directories, 4 files
+....
+
+[NOTE]
+====
+npm-watchの監視対象のdirectoryにある `node_modules` は、
+監視対象から外れるようです。
+====
+
+link:{npm-watch-url}/issues/58[
+変更したfile pathをnpm-scriptへ渡す機能は、npm-watchにありません。^]
+そのため `covert` では全てのasciidoc fileを渡しています。
+
+=== 変更したasciidoc fileだけのHTML fileを生成する方法
+
+[CAUTION]
+====
+実際に試して、動作確認していないので、本当にできるかはわかりません。
+====
+
+:nodemon-url: https://github.com/remy/nodemon
+
+設定したfileが変更されたら、設定したJavaScriptを実行する
+link:https://nodemon.io/[
+nodemon^]を使用します。
+
+npm-watchとは違い、npm-scriptではなく、
+nodemonは設定したJavaScript codeを実行します。
+npm-watchもnodemonを使用しています。
+
+link:{nodemon-url}/blob/main/doc/events.md[
+nodemonのevent^]のr `estart` で、変更したfile listを取得できます。
+nodemonの `restart` eventを使用すれば、
+変更したasciidoc fileだけをasciidoctorに渡せ、
+変更したasciidoc fileだけのHTML fileを生成できると考えています。
+
+[NOTE]
+====
+nodemon cliで、変更したfile pathを渡す機能は実装されないみたいです。
+
+* link:{nodemon-url}/issues/227[
+  Pass filename as parameter to executable? · Issue #227 · remy/nodemon^]
+* link:{nodemon-url}/issues/1688[
+  Restart event providing all filepaths to --exec · Issue #1688 · remy/nodemon^]
+
+====
+
+==== やらない理由
+
+変更したasciidoc fileだけのHTML fileを生成するようにしない理由は次の2点です。
+
+* browserの更新が2回以上でも気にならない +
+  変更したasciidoc fileだけのHTML fileを生成すれば、 asciidoc変更時、
+  browserの更新が1回だけになります。
+  しかし、更新回数が1回でも、複数回でも私は気になりませんでした。
+  previewの更新速度を遅くして、全てのHTML fileを生成した後に更新し、
+  更新を1回がけにする回避策もあります。
+* 修正する際に時間がかかりそう +
+  次の2点に時間がかかりそうです。
+  ** nodemonのeventの使用方法を学ぶ
+  ** asciidoctor.jsのHTML fileを生成するcommand `asciiidoctor <file-path>`
+     をJavaScriptで書く方法を調査する
+
+== fileが変更されたら、ページを自動更新するserverを使用する
+
+fileが変更されたら、ページを自動更新できる機能も持つlink:http://tapiov.net/live-server/[
+Live Server^]を使用します。
+
+`live-server --watch=\\**/*.html asciidoc` を実行して、serverを起動します。
+command起動後、default browserがserverのroot directoryを表示します。
+`asciidoc` directory内のHTML fileが変更したら、ページを自動更新したいため
+`--watch=\**/*.html` を追加しています。
+
+[literal]
+....
+$ live-server --watch=**/*.html asciidoc
+
+Serving "asciidoc" at http://127.0.0.1:8080
+Ready for changes
+# asciidoc/banana.htmlが変更されたので、browserのpageを更新します
+Change detected asciidoc/apple/banana.html
+Change detected asciidoc/egg/tomato.html
+....
+
+== AsciidocのHTML fileの生成とLive serverを同時に実行する
+
+asciidoc fileの変更を監視するnpm-watchと、
+HTML fileの変更を監視するLive Serverを、
+同時に実行するためにlink:https://www.npmjs.com/package/npm-run-all[
+npm-run-all^]を使用します。
+
+次のように設定して、
+`preview` でnpm-watchとLive Serverを並列に実行するように設定します。
+
+.package.jsonの `scripts` 部分だけ
+[source, JavaScript]
+----
+"scripts": {
+  "convert": "find ./asciidoc/ -type f -name '*.adoc' -not -path '*/node_modules/*' -exec asciidoctor {} +",
+  "remove-html": "find ./asciidoc/ -type f -name '*.html' -not -path '*/node_modules/*' -delete",
+  "serve": "live-server --watch=**/*.html asciidoc",
+  "watch": "npm-watch",
+  "preview": "run-p watch serve"
+},
+----
+
+[literal]
+....
+$ npm run preview
+
+> preview
+> run-p watch serve
+
+
+> watch
+> npm-watch
+
+
+> serve
+> live-server --watch=**/*.html asciidoc
+
+No task specified. Will go through all possible tasks
+Serving "asciidoc" at http://127.0.0.1:8080
+Ready for changes
+[convert] [nodemon] 2.0.13
+# `npm-wath` 開始時に `covert` を実行して、HTML fileを生成し
+# その生成に対し、Live Serverが反応しました
+Change detected asciidoc/egg/tomato.html
+Change detected asciidoc/apple/banana.html
+[convert] [nodemon] clean exit - waiting for changes before restart
+[convert] [nodemon] restarting due to changes...
+[convert] [nodemon] starting `npm run -s convert`
+Change detected asciidoc/egg/tomato.html
+Change detected asciidoc/apple/banana.html
+[convert] [nodemon] clean exit - waiting for changes before restart
+....
+
+
+// tag::copyright[]
+
+'''
+
+{copyright-with-author-link}
+
+// end::copyright[]
